@@ -1,0 +1,93 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('continuousDownload')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git 'https://github.com/gassama85/maven.git'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Jenkins failed to download the code for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. coding team: Download Failure Notice', to: 'gassama851@outlook.com'
+                    }
+                }
+            }
+        }
+        stage('continuousBuils')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh 'mvn package'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Jenkins failed to build artifact for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. PROGREMMERS: Artifact Build Failure Notice', to: 'gassama851@outlook.com'
+                    }
+                }
+            }
+        }
+        stage('continuousDeployment')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        deploy adapters: [tomcat9(credentialsId: 'b27a68ce-7549-4422-97cd-ee44eba68331', path: '', url: 'http://3.83.230.182:8080')], contextPath: 'testapp', war: '**/*.war'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Jenkins failed to deploy the artifact for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. Middle managers: Artifact Deployment Failure Notice', to: 'gassama851@outlook.com'
+                    }
+                }
+            }
+        }
+        stage('continuousTesting')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git 'https://github.com/gassama85/FunctionalTesting.git'
+                        sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePLPostConditions/testing.jar'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Jenkins failed to execute code test for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. Testing Team: Testing Failure Notice', to: 'gassama851@outlook.com'
+                    }
+                }
+            }
+        }
+        stage('continuousDelivery')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        deploy adapters: [tomcat9(credentialsId: 'b27a68ce-7549-4422-97cd-ee44eba68331', path: '', url: 'http://44.202.136.178:8080')], contextPath: 'prodapp', war: '**/*.war'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Jenkins failed to deliver artifact for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. Delivery Team: Delivery Failure Notice', to: 'gassama851@outlook.com'
+                    }
+                }
+            }
+        }
+    }
+}
