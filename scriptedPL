@@ -17,4 +17,8 @@ node('built-in')
         git 'https://github.com/gassama85/FunctionalTesting.git'
         sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline/testing.jar'
     }
+    stage('continuousDelivery')
+    {
+        deploy adapters: [tomcat9(credentialsId: 'b27a68ce-7549-4422-97cd-ee44eba68331', path: '', url: 'http://44.202.136.178:8080')], contextPath: 'prodapp', war: '**/*.war'
+    }
 }
