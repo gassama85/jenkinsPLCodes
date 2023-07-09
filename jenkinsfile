@@ -72,22 +72,5 @@ pipeline
                 }
             }
         }
-        stage('continuousDelivery')
-        {
-            steps
-            {
-                script
-                {
-                    try
-                    {
-                        deploy adapters: [tomcat9(credentialsId: 'b27a68ce-7549-4422-97cd-ee44eba68331', path: '', url: 'http://44.202.136.178:8080')], contextPath: 'prodapp', war: '**/*.war'
-                    }
-                    catch(Exception e1)
-                    {
-                        mail bcc: '', body: 'Jenkins failed to deliver artifact for the skyda project', cc: 'gassama85@gmail.com', from: '', replyTo: '', subject: 'Attn. Delivery Team: Delivery Failure Notice', to: 'gassama851@outlook.com'
-                    }
-                }
-            }
-        }
     }
 }
