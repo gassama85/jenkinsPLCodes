@@ -31,5 +31,14 @@ pipeline
                 git 'https://github.com/gassama85/FunctionalTesting'
             }
         }
+	stage('continuousDelivery')
+        {
+            steps
+            {
+                sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline/testing.jar'
+                deploy adapters: [tomcat9(credentialsId: 'b27a68ce-7549-4422-97cd-ee44eba68331', path: '', url: 'http://44.202.136.178:8080')], contextPath: 'prodapp', war: '**/*.war'
+            }
+        }
+
     }
 }
